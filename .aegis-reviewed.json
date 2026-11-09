@@ -1,0 +1,29 @@
+[
+  {
+    "rule": "XSS-RAW-HTML",
+    "file": "index.html",
+    "evidence_sha256": "7408f10bc8828221",
+    "where": "render(): writes the whole screen",
+    "reason": "The page has two untrusted inputs: the search box, written back only as value=\"esc(sel.q)\" and otherwise used to filter rows, and location.hash, accepted only if it names a key in SCREENS. Everything else comes from the knowledge base bundled in the page. The CSP sets connect-src 'none', so no outside data arrives at run time.",
+    "reviewed_by": "AEGIS review in Claude, confirmed by [VERIFY owner initials]",
+    "date": "2026-11-09"
+  },
+  {
+    "rule": "XSS-RAW-HTML",
+    "file": "index.html",
+    "evidence_sha256": "71adc72e74dd1a19",
+    "where": "plist refresh while the user types in the search box",
+    "reason": "Chips are built by chip(), which applies esc() to every label and value. The page has two untrusted inputs: the search box, written back only as value=\"esc(sel.q)\" and otherwise used to filter rows, and location.hash, accepted only if it names a key in SCREENS. Everything else comes from the knowledge base bundled in the page. The CSP sets connect-src 'none', so no outside data arrives at run time.",
+    "reviewed_by": "AEGIS review in Claude, confirmed by [VERIFY owner initials]",
+    "date": "2026-11-09"
+  },
+  {
+    "rule": "XSS-RAW-HTML",
+    "file": "index.html",
+    "evidence_sha256": "4094dd4f0d47849d",
+    "where": "copy box for the notes text",
+    "reason": "The only variable part is escaped with esc(text). The page has two untrusted inputs: the search box, written back only as value=\"esc(sel.q)\" and otherwise used to filter rows, and location.hash, accepted only if it names a key in SCREENS. Everything else comes from the knowledge base bundled in the page. The CSP sets connect-src 'none', so no outside data arrives at run time.",
+    "reviewed_by": "AEGIS review in Claude, confirmed by [VERIFY owner initials]",
+    "date": "2026-11-09"
+  }
+]
