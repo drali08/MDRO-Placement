@@ -1,0 +1,35 @@
+# PR gate (LUCID E11), static-page profile.
+# This repository holds the published single-file page, so there is no npm install or test run here;
+# the unit and journey tests run in the source project before a release is copied in.
+# The scanner lives in the private repo drali08/launch-gate-tools so the AEGIS scripts stay private.
+name: PR gate
+on:
+  pull_request:
+    branches: [main]
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Gate tools token present
+        env:
+          GATE_TOOLS_TOKEN: ${{ secrets.GATE_TOOLS_TOKEN }}
+        run: |
+          if [ -z "$GATE_TOOLS_TOKEN" ]; then
+            echo "Add repository secret GATE_TOOLS_TOKEN: a fine-grained token with read access to drali08/launch-gate-tools."
+            exit 1
+          fi
+      - name: Fetch the private gate tools
+        uses: actions/checkout@v4
+        with:
+          repository: drali08/launch-gate-tools
+          token: ${{ secrets.GATE_TOOLS_TOKEN }}
+          path: vendor/gate-tools
+      - name: AEGIS security patterns (unreviewed Critical or High findings fail)
+        run: |
+          python3 vendor/gate-tools/aegis/aegis_scan.py . --out "$RUNNER_TEMP/aegis_scan.json"
+          python3 vendor/gate-tools/lucid/aegis_gate.py "$RUNNER_TEMP/aegis_scan.json" .aegis-reviewed.json
+      - name: Content-Security-Policy present and blocking network calls
+        run: |
+          grep -q 'http-equiv="Content-Security-Policy"' index.html
+          grep -q "connect-src 'none'" index.html
